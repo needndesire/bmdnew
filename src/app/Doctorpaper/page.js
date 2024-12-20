@@ -36,10 +36,10 @@ export default function page() {
     useEffect(() => {
       
         console.log(patiantData); 
-        let {address,expireDate, age,date,patient_name}=patiantData
+        let {address,expireDate,age,date,patient_name}=patiantData
         console.log(patient_name)
     }, [patiantData]); 
-  
+
   return (
     <>
      <section>
@@ -80,7 +80,7 @@ export default function page() {
                                UHID
                             </p>
                             <p className=' text-[12px] text-[#949090] font-[500]  '>
-                                <span >: 256452</span>
+                                <span >: {patiantData.uhid}</span>
                             </p>
                         </div>
                         <div className='grid grid-cols-[30%_auto]'>
@@ -110,7 +110,7 @@ export default function page() {
                                 Date/Time
                             </p>
                             <p className=' text-[13px]  text-[#949090]  font-[700] '>
-                                <span >: {patiantData.date} 12/ 12:30</span>
+                                <span >: {patiantData.date} / 12:30</span>
                             </p>
                         </div>
                       
@@ -151,7 +151,7 @@ export default function page() {
                                 Valid Upto
                             </p>
                             <p className=' text-[13px]  text-[#949090]  font-[700] '>
-                                <span >: 17-12-2024 </span>
+                                <span >: {patiantData.expireDate} (7 days )</span>
                             </p>
                         </div>
                       

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link';
-import React, { useContext } from 'react'// form page
+import React, { useContext, useState } from 'react'// form page
 import { FiUser } from "react-icons/fi";
 import { getDatabase, set, ref } from "firebase/database";
 import { app } from '../Firebaseconfig/Firebaseconfig';
@@ -9,15 +9,34 @@ import { HeaderContext } from '../context/ContextManege';
 // import Swal from 'sweetalert2/dist/sweetalert2.js'
 // import 'sweetalert2/src/sweetalert2.scss'
 export default function page() {
+  let [uhid,setuhid]=useState(0)
   const dataBase = getDatabase(app);
   let saveFromData = (e) => {
     e.preventDefault();
+
+    //check last token
+    const lastdata = localStorage.getItem('last-patient');
+
+    const currentDate = new Date();
+    // console.log('first', );
+    let newToken;
+    if(lastdata){
+      const {date, token} = JSON.parse(lastdata);
+      // console.log(date, date == new Date(), lastdata);
+
+      newToken = (date == currentDate.getDate()) ? token + 1 : 1;
+    }
+
+    if(!lastdata) newToken = 1;
+    // return;
+
+   
     let patient_name = e.target.patient_name.value;
     let guardian_name = e.target.guardian_name.value
     let phone_number=e.target.phone_number.value
     let address=e.target.address.value
     let gender=e.target.gender.value
-    let currentDate = new Date()
+    // let currentDate = new Date()
     let age=e.target.age.value
     let obj = {
       guardian_name,
@@ -26,16 +45,20 @@ export default function page() {
       address,
       age,
       gender,
+      uhid:uhid,
       date: currentDate.getDate() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getFullYear(),
-      expireDate: (currentDate.getDate() + 7) + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getFullYear()
+      expireDate: (currentDate.getDate()+7) + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getFullYear()
     }
     let patienId = Date.now()
     set(ref(dataBase, 'patient/' + patienId), obj);
     e.target.reset();
+    //update last token number in local storage
+    //gh pages
+    localStorage.setItem('last-patient', JSON.stringify({date: currentDate.getDate(), token: newToken}));
     Swal.fire({
       position: "top-end",
       icon: "success",
-      title: "Your token  no 1",
+      title: `Your token  no ${newToken}`,
       showConfirmButton: false,
       timer: 3000
     });
@@ -108,7 +131,7 @@ export default function page() {
           </div>
           {/* amount token */}
 
-          <button type="submit" className=" bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-white"><div>book your Appoenment</div></button>
+          <button type="submit" onClick={()=>setuhid(uhid+1)} className=" bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-white" ><div>book your Appoenment</div></button>
 
 
         </form>
